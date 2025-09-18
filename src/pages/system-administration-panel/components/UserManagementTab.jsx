@@ -67,17 +67,26 @@ const UserManagementTab = () => {
     { value: 'Banking Operations', label: 'Banking Operations' }
   ];
 
-  const filteredUsers = users?.filter(user => {
-    const matchesSearch = user?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
-                         user?.email?.toLowerCase()?.includes(searchTerm?.toLowerCase());
-    const matchesRole = selectedRole === 'all' || user?.role === selectedRole;
+  const branchOptions = [
+    { value: 'all', label: 'All Branches' },
+    { value: 'Phnom Penh Central', label: 'Phnom Penh Central' },
+    { value: 'Siem Reap', label: 'Siem Reap' },
+    { value: 'Battambang', label: 'Battambang' },
+    { value: 'Cash Management Center', label: 'Cash Management Center' },
+    { value: 'Head Office', label: 'Head Office' }
+  ];
+
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = selectedRole === 'all' || user.role === selectedRole;
     return matchesSearch && matchesRole;
   });
 
   const handleUserSelect = (userId) => {
     setSelectedUsers(prev => 
-      prev?.includes(userId) 
-        ? prev?.filter(id => id !== userId)
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
         : [...prev, userId]
     );
   };
@@ -93,7 +102,7 @@ const UserManagementTab = () => {
       inactive: 'bg-error/10 text-error',
       pending: 'bg-warning/10 text-warning'
     };
-    return `inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colors?.[status] || 'bg-muted text-muted-foreground'}`;
+    return `inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colors[status] || 'bg-muted text-muted-foreground'}`;
   };
 
   return (
@@ -105,7 +114,7 @@ const UserManagementTab = () => {
             type="search"
             placeholder="Search users..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e?.target?.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-80"
           />
           <Select
@@ -143,10 +152,10 @@ const UserManagementTab = () => {
         </div>
       </div>
       {/* Bulk Actions */}
-      {selectedUsers?.length > 0 && (
+      {selectedUsers.length > 0 && (
         <div className="flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-lg">
           <span className="text-sm font-medium text-primary">
-            {selectedUsers?.length} user{selectedUsers?.length > 1 ? 's' : ''} selected
+            {selectedUsers.length} user{selectedUsers.length > 1 ? 's' : ''} selected
           </span>
           <div className="flex items-center space-x-2">
             <Button
@@ -181,11 +190,11 @@ const UserManagementTab = () => {
               <tr>
                 <th className="w-12 p-4">
                   <Checkbox
-                    checked={selectedUsers?.length === filteredUsers?.length && filteredUsers?.length > 0}
-                    indeterminate={selectedUsers?.length > 0 && selectedUsers?.length < filteredUsers?.length}
+                    checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                    indeterminate={selectedUsers.length > 0 && selectedUsers.length < filteredUsers.length}
                     onChange={(e) => {
-                      if (e?.target?.checked) {
-                        setSelectedUsers(filteredUsers?.map(u => u?.id));
+                      if (e.target.checked) {
+                        setSelectedUsers(filteredUsers.map(u => u.id));
                       } else {
                         setSelectedUsers([]);
                       }
@@ -201,49 +210,49 @@ const UserManagementTab = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredUsers?.map((user) => (
-                <tr key={user?.id} className="hover:bg-muted/30 transition-colors duration-150">
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-muted/30 transition-colors duration-150">
                   <td className="p-4">
                     <Checkbox
-                      checked={selectedUsers?.includes(user?.id)}
-                      onChange={() => handleUserSelect(user?.id)}
+                      checked={selectedUsers.includes(user.id)}
+                      onChange={() => handleUserSelect(user.id)}
                     />
                   </td>
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
-                        {user?.name?.split(' ')?.map(n => n?.[0])?.join('')}
+                        {user.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-foreground">{user?.name}</p>
-                        <p className="text-xs text-muted-foreground">{user?.email}</p>
+                        <p className="text-sm font-medium text-foreground">{user.name}</p>
+                        <p className="text-xs text-muted-foreground">{user.email}</p>
                       </div>
                     </div>
                   </td>
                   <td className="p-4">
                     <div>
-                      <p className="text-sm font-medium text-foreground">{user?.role}</p>
-                      <p className="text-xs text-muted-foreground">{user?.branch}</p>
+                      <p className="text-sm font-medium text-foreground">{user.role}</p>
+                      <p className="text-xs text-muted-foreground">{user.branch}</p>
                     </div>
                   </td>
                   <td className="p-4">
-                    <span className={getStatusBadge(user?.status)}>
-                      {user?.status}
+                    <span className={getStatusBadge(user.status)}>
+                      {user.status}
                     </span>
                   </td>
                   <td className="p-4">
                     <p className="text-sm text-foreground font-mono">
-                      {new Date(user.lastLogin)?.toLocaleDateString()}
+                      {new Date(user.lastLogin).toLocaleDateString()}
                     </p>
                     <p className="text-xs text-muted-foreground font-mono">
-                      {new Date(user.lastLogin)?.toLocaleTimeString()}
+                      {new Date(user.lastLogin).toLocaleTimeString()}
                     </p>
                   </td>
                   <td className="p-4">
                     <div className="flex items-center space-x-2">
-                      <div className={`w-2 h-2 rounded-full ${user?.adSync ? 'bg-success' : 'bg-error'}`} />
+                      <div className={`w-2 h-2 rounded-full ${user.adSync ? 'bg-success' : 'bg-error'}`} />
                       <span className="text-xs text-muted-foreground">
-                        {user?.adSync ? 'Synced' : 'Manual'}
+                        {user.adSync ? 'Synced' : 'Manual'}
                       </span>
                     </div>
                   </td>
@@ -259,13 +268,13 @@ const UserManagementTab = () => {
                         variant="ghost"
                         size="sm"
                         iconName="Key"
-                        onClick={() => console.log('Reset password', user?.id)}
+                        onClick={() => console.log('Reset password', user.id)}
                       />
                       <Button
                         variant="ghost"
                         size="sm"
                         iconName="MoreHorizontal"
-                        onClick={() => console.log('More actions', user?.id)}
+                        onClick={() => console.log('More actions', user.id)}
                       />
                     </div>
                   </td>
@@ -281,7 +290,7 @@ const UserManagementTab = () => {
           <div className="flex items-center space-x-2">
             <Icon name="Users" size={20} className="text-primary" />
             <div>
-              <p className="text-2xl font-bold text-foreground">{users?.length}</p>
+              <p className="text-2xl font-bold text-foreground">{users.length}</p>
               <p className="text-sm text-muted-foreground">Total Users</p>
             </div>
           </div>
@@ -291,7 +300,7 @@ const UserManagementTab = () => {
             <Icon name="UserCheck" size={20} className="text-success" />
             <div>
               <p className="text-2xl font-bold text-foreground">
-                {users?.filter(u => u?.status === 'active')?.length}
+                {users.filter(u => u.status === 'active').length}
               </p>
               <p className="text-sm text-muted-foreground">Active Users</p>
             </div>
@@ -302,7 +311,7 @@ const UserManagementTab = () => {
             <Icon name="Shield" size={20} className="text-accent" />
             <div>
               <p className="text-2xl font-bold text-foreground">
-                {users?.filter(u => u?.adSync)?.length}
+                {users.filter(u => u.adSync).length}
               </p>
               <p className="text-sm text-muted-foreground">AD Synced</p>
             </div>
@@ -313,11 +322,11 @@ const UserManagementTab = () => {
             <Icon name="Clock" size={20} className="text-warning" />
             <div>
               <p className="text-2xl font-bold text-foreground">
-                {users?.filter(u => {
+                {users.filter(u => {
                   const lastLogin = new Date(u.lastLogin);
                   const today = new Date();
                   return (today - lastLogin) / (1000 * 60 * 60 * 24) <= 1;
-                })?.length}
+                }).length}
               </p>
               <p className="text-sm text-muted-foreground">Active Today</p>
             </div>
