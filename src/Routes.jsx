@@ -9,6 +9,7 @@ import ReportingAndAnalyticsDashboard from './pages/reporting-and-analytics-dash
 import RequestStatusTracking from './pages/request-status-tracking';
 import OverLimitApprovalRequestForm from './pages/over-limit-approval-request-form';
 import ApprovalQueueDashboard from './pages/approval-queue-dashboard';
+import Login from "./pages/Login";
 
 const Routes = () => {
   return (
@@ -17,6 +18,7 @@ const Routes = () => {
       <ScrollToTop />
       <RouterRoutes>
         {/* Define your route here */}
+        <Route path="/login" element={<Login />} />
         <Route path="/" element={<ApprovalQueueDashboard />} />
         <Route path="/cash-transfer-request-form" element={<CashTransferRequestForm />} />
         <Route path="/system-administration-panel" element={<SystemAdministrationPanel />} />
