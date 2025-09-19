@@ -1,21 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Routes from "./Routes";
 import Login from "./pages/Login";
+import { loadFromStorage } from "./utils/storage";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+ const [isAuthenticated, setIsAuthenticated] = useState(false);
+ const [currentUser, setCurrentUser] = useState(null);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // In a real app, you'd have actual authentication logic here
-    setIsAuthenticated(true);
-  };
+ const handleLogin = (e) => {
+   e.preventDefault();
+   const email = e.target.email.value;
+   const password = e.target.password.value;
 
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />;
-  }
+   const users = loadFromStorage('users') || [];
+   const foundUser = users.find(user => user.email === email && user.password === password);
 
-  return <Routes />;
+   if (foundUser) {
+     setCurrentUser(foundUser);
+     setIsAuthenticated(true);
+   } else {
+     alert("Invalid email or password.");
+   }
+ };
+
+ if (!isAuthenticated) {
+   return <Login onLogin={handleLogin} />;
+ }
+
+ // Pass the logged-in user to the routes
+ return <Routes user={currentUser} />;
 }
 
 export default App;
