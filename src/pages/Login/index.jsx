@@ -2,8 +2,26 @@ import React from "react";
 import Icon from "../../components/AppIcon";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
+import { saveToStorage } from "../../utils/storage"; // <-- Import the save function
 
 const Login = ({ onLogin }) => {
+
+  // --- NEW FUNCTION TO CREATE THE DEFAULT ADMIN ---
+  const handleReset = () => {
+    const defaultAdmin = {
+      id: Date.now(),
+      name: 'Default Admin',
+      email: 'admin@wingbank.com',
+      password: 'password',
+      role: 'Banking Operations',
+      branch: 'Head Office',
+      status: 'active',
+      lastLogin: new Date().toISOString()
+    };
+    saveToStorage('users', [defaultAdmin]);
+    alert("Default admin account has been created/reset. Please try logging in again with email: admin@wingbank.com and password: password");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="max-w-md w-full p-8 space-y-8 bg-card border border-border rounded-lg shadow-lg">
@@ -58,7 +76,7 @@ const Login = ({ onLogin }) => {
             type="email"
             autoComplete="email"
             required
-            placeholder="user@wingbank.com"
+            placeholder="admin@wingbank.com"
           />
           <Input
             label="Password"
@@ -67,39 +85,22 @@ const Login = ({ onLogin }) => {
             type="password"
             autoComplete="current-password"
             required
-            placeholder="••••••••"
+            placeholder="password"
           />
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
-            <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-primary hover:text-primary/90"
-              >
-                Forgot your password?
-              </a>
-            </div>
-          </div>
+          
           <div>
-            {/* --- THE onClick={onLogin} PROP HAS BEEN REMOVED FROM THIS BUTTON --- */}
             <Button type="submit" className="w-full">
               Sign in
             </Button>
           </div>
         </form>
+        {/* --- NEW RESET BUTTON AND HELPER TEXT --- */}
+        <div className="text-center text-sm text-muted-foreground pt-4 border-t border-border">
+          <p>Can't log in or first time using the app?</p>
+          <Button variant="link" onClick={handleReset} className="text-primary">
+            Reset / Create Default Admin
+          </Button>
+        </div>
       </div>
     </div>
   );
