@@ -15,8 +15,8 @@ function App() {
      const defaultAdmin = {
        id: Date.now(),
        name: 'Default Admin',
-       email: 'admin@wingbank.com',
-       password: 'password',
+       email: 'admin.dbp@wingbank.com',
+       password: 'Juniper@123',
        role: 'Banking Operations',
        branch: 'Head Office',
        status: 'active',
