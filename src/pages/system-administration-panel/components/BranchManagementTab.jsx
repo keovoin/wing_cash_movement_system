@@ -1,23 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
-import { Checkbox } from '../../../components/ui/Checkbox';
+import { saveToStorage, loadFromStorage } from '../../../utils/storage';
 
 const BranchManagementTab = () => {
- const [branches, setBranches] = useState([
-   { id: 1, name: 'Phnom Penh Central', code: 'PP001', region: 'Phnom Penh', status: 'active' },
-   { id: 2, name: 'Siem Reap', code: 'SR001', region: 'Siem Reap', status: 'active' },
-   { id: 3, name: 'Battambang', code: 'BB001', region: 'Battambang', status: 'active' },
-   { id: 4, name: 'Cash Management Center', code: 'CMC001', region: 'Head Office', status: 'active' },
-   { id: 5, name: 'Head Office', code: 'HO001', region: 'Head Office', status: 'active' },
- ]);
+ const [branches, setBranches] = useState([]);
  const [showAddBranch, setShowAddBranch] = useState(false);
  const [newBranch, setNewBranch] = useState({ name: '', code: '', region: '', status: 'active' });
+ 
+ useEffect(() => {
+   const savedBranches = loadFromStorage('branches');
+   if (savedBranches && savedBranches.length > 0) {
+       setBranches(savedBranches);
+   } else {
+       // If no branches are saved, initialize with some defaults
+       const defaultBranches = [
+           { id: 1, name: 'Phnom Penh Central', code: 'PP001', region: 'Phnom Penh', status: 'active' },
+           { id: 2, name: 'Siem Reap', code: 'SR001', region: 'Siem Reap', status: 'active' },
+       ];
+       setBranches(defaultBranches);
+       saveToStorage('branches', defaultBranches);
+   }
+ }, []);
 
  const handleAddBranch = () => {
    if (newBranch.name && newBranch.code && newBranch.region) {
-       setBranches([...branches, { ...newBranch, id: Date.now() }]);
+       const updatedBranches = [...branches, { ...newBranch, id: Date.now() }];
+       setBranches(updatedBranches);
+       saveToStorage('branches', updatedBranches);
        setNewBranch({ name: '', code: '', region: '', status: 'active' });
        setShowAddBranch(false);
    } else {
