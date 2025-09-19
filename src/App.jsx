@@ -1,37 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Routes from "./Routes";
 import Login from "./pages/Login";
-import { loadFromStorage } from "./utils/storage";
+import { supabase } from "./supabaseClient";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // The automatic admin creation logic has been completely removed.
-  // We will now rely on the manual button on the login screen.
+  useEffect(() => {
+    // Check for an active session when the app loads
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    // Listen for changes in authentication state (login/logout)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
 
-    const users = loadFromStorage('users') || [];
-    const foundUser = users.find(user => user.email === email && user.password === password);
+    return () => subscription.unsubscribe();
+  }, []);
 
-    if (foundUser) {
-      setCurrentUser(foundUser);
-      setIsAuthenticated(true);
-    } else {
-      alert("Invalid email or password. If you are the admin, please use the 'Reset' button to create your account.");
-    }
-  };
-
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />;
+  if (loading) {
+    return <div>Loading...</div>; // Or a proper loading spinner
   }
 
-  // Pass the logged-in user to the routes
-  return <Routes user={currentUser} />;
+  if (!session) {
+    return <Login />;
+  }
+
+  // Pass the user from the session to the routes
+  return <Routes user={session.user} />;
 }
 
 export default App;
