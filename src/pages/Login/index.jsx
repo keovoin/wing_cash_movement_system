@@ -94,7 +94,8 @@ const Login = ({ onLogin }) => {
             </div>
           </div>
           <div>
-            <Button type="submit" className="w-full" onClick={onLogin}>
+            {/* --- THE onClick={onLogin} PROP HAS BEEN REMOVED FROM THIS BUTTON --- */}
+            <Button type="submit" className="w-full">
               Sign in
             </Button>
           </div>
