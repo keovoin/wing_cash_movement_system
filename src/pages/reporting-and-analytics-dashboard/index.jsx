@@ -1,219 +1,171 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DashboardHeader from './components/DashboardHeader';
-import FilterPanel from './components/FilterPanel';
+import Header from '../../components/ui/Header'; // <-- Import main Header
+import Sidebar from '../../components/ui/Sidebar'; // <-- Import main Sidebar
 import KPICards from './components/KPICards';
 import TransactionVolumeChart from './components/TransactionVolumeChart';
 import ApprovalMetricsChart from './components/ApprovalMetricsChart';
 import BranchPerformanceTable from './components/BranchPerformanceTable';
 import ComplianceStatusPanel from './components/ComplianceStatusPanel';
 import SystemHealthIndicators from './components/SystemHealthIndicators';
+import FilterPanel from './components/FilterPanel';
+import Button from '../../components/ui/Button';
 
 const ReportingAndAnalyticsDashboard = () => {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(new Date()?.toLocaleTimeString());
-  const [isRefreshing, setIsRefreshing] = useState(false);
+ const navigate = useNavigate();
+ const [isLoading, setIsLoading] = useState(false);
+ const [isFilterOpen, setIsFilterOpen] = useState(false);
+ const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString());
+ const [isRefreshing, setIsRefreshing] = useState(false);
+ const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  const [filters, setFilters] = useState({
-    dateRange: 'last_7_days',
-    branches: 'all',
-    currency: 'all',
-    requestType: 'all',
-    status: 'all',
-    amountMin: '',
-    amountMax: '',
-    dateFrom: '',
-    dateTo: ''
-  });
+ const [filters, setFilters] = useState({
+   dateRange: 'last_7_days',
+   branches: 'all',
+   currency: 'all',
+   requestType: 'all',
+   status: 'all',
+   amountMin: '',
+   amountMax: '',
+   dateFrom: '',
+   dateTo: ''
+ });
 
-  const [dashboardData, setDashboardData] = useState({
-    kpis: null,
-    transactionVolume: null,
-    approvalMetrics: null,
-    branchPerformance: null,
-    complianceStatus: null,
-    systemHealth: null
-  });
+ const [dashboardData, setDashboardData] = useState({
+   kpis: null,
+   transactionVolume: null,
+   approvalMetrics: null,
+   branchPerformance: null,
+   complianceStatus: null,
+   systemHealth: null
+ });
 
-  // Mock user data
-  const currentUser = {
-    name: 'Sarah Chen',
-    role: 'Banking Operations Manager',
-    email: 'sarah.chen@wingbank.com',
-    permissions: ['view_all_branches', 'export_reports', 'system_admin']
-  };
+ // Mock user data
+ const currentUser = {
+   name: 'Sarah Chen',
+   role: 'Banking Operations Manager',
+   email: 'sarah.chen@wingbank.com',
+   permissions: ['view_all_branches', 'export_reports', 'system_admin']
+ };
 
-  useEffect(() => {
-    // Simulate initial data load
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setLastUpdated(new Date()?.toLocaleTimeString());
-    }, 1500);
-  }, []);
+ useEffect(() => {
+   // Simulate initial data load
+   setIsLoading(true);
+   setTimeout(() => {
+     setIsLoading(false);
+     setLastUpdated(new Date().toLocaleTimeString());
+   }, 1500);
+ }, []);
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsRefreshing(false);
-      setLastUpdated(new Date()?.toLocaleTimeString());
-    }, 2000);
-  };
+ const handleRefresh = async () => {
+   setIsRefreshing(true);
+   // Simulate API call
+   setTimeout(() => {
+     setIsRefreshing(false);
+     setLastUpdated(new Date().toLocaleTimeString());
+   }, 2000);
+ };
 
-  const handleExport = (format) => {
-    console.log(`Exporting dashboard data in ${format} format`);
-    // Simulate export process
-    const exportData = {
-      format,
-      filters,
-      timestamp: new Date()?.toISOString(),
-      user: currentUser?.name
-    };
-    
-    // In real implementation, this would trigger file download
-    alert(`Export initiated: ${format?.toUpperCase()} report will be generated and emailed to ${currentUser?.email}`);
-  };
+ const handleExport = (format) => {
+   console.log(`Exporting dashboard data in ${format} format`);
+   alert(`Export initiated: ${format.toUpperCase()} report will be generated and emailed to ${currentUser.email}`);
+ };
 
-  const handleFiltersChange = (newFilters) => {
-    setFilters(newFilters);
-    // Simulate data refresh based on new filters
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setLastUpdated(new Date()?.toLocaleTimeString());
-    }, 1000);
-  };
+ const handleFiltersChange = (newFilters) => {
+   setFilters(newFilters);
+   setIsLoading(true);
+   setTimeout(() => {
+     setIsLoading(false);
+     setLastUpdated(new Date().toLocaleTimeString());
+   }, 1000);
+ };
+ 
+ return (
+   <div className="min-h-screen bg-background">
+     {/* --- ADDED STANDARD HEADER AND SIDEBAR --- */}
+     <Header 
+       user={currentUser} 
+       onMenuToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+     />
+     <Sidebar 
+       isCollapsed={isSidebarCollapsed} 
+       onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+       user={currentUser} 
+     />
 
-  const handleSavePreset = (name, filterData) => {
-    console.log(`Saving preset: ${name}`, filterData);
-    // In real implementation, save to user preferences
-    alert(`Filter preset "${name}" saved successfully`);
-  };
+     {/* --- WRAPPED CONTENT IN MAIN TAG WITH CORRECT LAYOUT --- */}
+     <main className={`pt-16 transition-all duration-300 ${isSidebarCollapsed ? 'lg:ml-16' : 'lg:ml-72'}`}>
+       
+       {/* Page Header */}
+       <div className="bg-card border-b border-border p-6">
+         <div className="flex items-center justify-between">
+           <div>
+             <h1 className="text-2xl font-semibold text-foreground">
+               Reporting & Analytics Dashboard
+             </h1>
+             <p className="text-sm text-muted-foreground">
+               Comprehensive cash transfer operations analytics and performance metrics
+             </p>
+           </div>
+           <div className="flex items-center space-x-2">
+             <Button variant="outline" onClick={() => setIsFilterOpen(!isFilterOpen)}>
+               {isFilterOpen ? 'Hide Filters' : 'Show Filters'}
+             </Button>
+             <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing}>
+               {isRefreshing ? 'Refreshing...' : 'Refresh'}
+             </Button>
+           </div>
+         </div>
+       </div>
 
-  const handleLoadPreset = (preset) => {
-    console.log(`Loading preset: ${preset?.name}`);
-    // In real implementation, load preset filters
-    setFilters({
-      dateRange: 'last_30_days',
-      branches: 'all',
-      currency: 'all',
-      requestType: 'all',
-      status: 'all',
-      amountMin: '',
-      amountMax: ''
-    });
-    alert(`Loaded preset: ${preset?.name}`);
-  };
+       {/* Filter Panel */}
+       <FilterPanel
+         isOpen={isFilterOpen}
+         filters={filters}
+         onFiltersChange={handleFiltersChange}
+       />
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      if (event?.ctrlKey || event?.metaKey) {
-        switch (event?.key) {
-          case 'r':
-            event?.preventDefault();
-            handleRefresh();
-            break;
-          case 'f':
-            event?.preventDefault();
-            setIsFilterOpen(!isFilterOpen);
-            break;
-          case 'e':
-            event?.preventDefault();
-            handleExport('pdf');
-            break;
-          default:
-            break;
-        }
-      }
-    };
+       {/* Main Content */}
+       <div className="p-6 space-y-8">
+         {/* KPI Cards */}
+         <KPICards
+           data={dashboardData.kpis}
+           isLoading={isLoading}
+         />
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isFilterOpen]);
+         {/* Charts Row */}
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+           <TransactionVolumeChart
+             data={dashboardData.transactionVolume}
+             isLoading={isLoading}
+           />
+           <ApprovalMetricsChart
+             data={dashboardData.approvalMetrics}
+             isLoading={isLoading}
+           />
+         </div>
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <DashboardHeader
-        onRefresh={handleRefresh}
-        onExport={handleExport}
-        onFilterToggle={() => setIsFilterOpen(!isFilterOpen)}
-        isFilterOpen={isFilterOpen}
-        lastUpdated={lastUpdated}
-        isRefreshing={isRefreshing}
-      />
-      {/* Filter Panel */}
-      <FilterPanel
-        isOpen={isFilterOpen}
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-        onSavePreset={handleSavePreset}
-        onLoadPreset={handleLoadPreset}
-      />
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
-        {/* KPI Cards */}
-        <KPICards
-          data={dashboardData?.kpis}
-          isLoading={isLoading}
-        />
+         {/* Branch Performance Table */}
+         <BranchPerformanceTable
+           data={dashboardData.branchPerformance}
+           isLoading={isLoading}
+         />
 
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <TransactionVolumeChart
-            data={dashboardData?.transactionVolume}
-            isLoading={isLoading}
-          />
-          <ApprovalMetricsChart
-            data={dashboardData?.approvalMetrics}
-            isLoading={isLoading}
-          />
-        </div>
-
-        {/* Branch Performance Table */}
-        <BranchPerformanceTable
-          data={dashboardData?.branchPerformance}
-          isLoading={isLoading}
-        />
-
-        {/* Bottom Row - Compliance and System Health */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          <ComplianceStatusPanel
-            data={dashboardData?.complianceStatus}
-            isLoading={isLoading}
-          />
-          <SystemHealthIndicators
-            data={dashboardData?.systemHealth}
-            isLoading={isLoading}
-          />
-        </div>
-      </div>
-      {/* Quick Navigation Shortcuts */}
-      <div className="fixed bottom-6 right-6 flex flex-col space-y-2 z-40">
-        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
-          <div className="text-xs text-muted-foreground mb-2">Quick Actions</div>
-          <div className="space-y-1 text-xs">
-            <div className="flex items-center justify-between">
-              <span>Refresh</span>
-              <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Ctrl+R</kbd>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Filters</span>
-              <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Ctrl+F</kbd>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Export</span>
-              <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Ctrl+E</kbd>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+         {/* Bottom Row - Compliance and System Health */}
+         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+           <ComplianceStatusPanel
+             data={dashboardData.complianceStatus}
+             isLoading={isLoading}
+           />
+           <SystemHealthIndicators
+             data={dashboardData.systemHealth}
+             isLoading={isLoading}
+           />
+         </div>
+       </div>
+     </main>
+   </div>
+ );
 };
 
 export default ReportingAndAnalyticsDashboard;
